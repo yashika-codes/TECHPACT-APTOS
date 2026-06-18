@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechPact | Peer Technical Accountability on Aptos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-blur-container">
+        <div class="blur-blob blob-purple"></div>
+        <div class="blur-blob blob-blue"></div>
+        <div class="blur-blob blob-cyan"></div>
+    </div>
+
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-handshake-angle"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>TechPact</h1>
+                    <span>Aptos Accountability</span>
+                </div>
+            </div>
+            
+            <div class="header-controls">
+                <div class="mode-selector-wrapper">
+                    <span class="mode-label">Mode:</span>
+                    <div class="mode-toggle-group">
+                        <button id="btn-sim-mode" class="mode-btn active" title="Simulate without real APT coins">
+                            <i class="fa-solid fa-flask"></i> Simulator
+                        </button>
+                        <button id="btn-chain-mode" class="mode-btn" title="Connect to Aptos blockchain">
+                            <i class="fa-brands fa-connectdevelop"></i> Aptos Mainnet/Testnet
+                        </button>
+                    </div>
+                </div>
+
+                <button id="wallet-connect-btn" class="wallet-btn">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span id="wallet-btn-text">Connect Wallet</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <!-- Notification Toast -->
+        <div id="toast-container" class="toast-container"></div>
+
+        <!-- Wallet Info Banner -->
+        <div id="wallet-banner" class="wallet-banner hidden">
+            <div class="banner-content">
+                <i class="fa-solid fa-circle-info"></i>
+                <span id="wallet-banner-text">Wallet connected: 0x...</span>
+            </div>
+        </div>
+
+        <!-- Stats Overview Section -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Active Pacts</h3>
+                        <p id="stat-active">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Pacts Achieved</h3>
+                        <p id="stat-achieved">0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon red">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Staked</h3>
+                        <p id="stat-staked">0 APT</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon cyan">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Accountability Rate</h3>
+                        <p id="stat-rate">100%</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Dashboard Split Layout -->
+        <div class="dashboard-grid">
+            
+            <!-- Left Panel: Create a Pact -->
+            <section class="panel-card create-pact-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-plus-circle"></i> Create new TechPact</h2>
+                    <p>Commit funds, set a goal, and appoint your reviewer.</p>
+                </div>
+                
+                <form id="pact-form" class="pact-form">
+                    <div class="form-group">
+                        <label for="pact-title">Milestone Goal Description</label>
+                        <input type="text" id="pact-title" placeholder="e.g. Implement the database layer of my project" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pact-reviewer">Designated Peer Reviewer Address</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <input type="text" id="pact-reviewer" placeholder="0x... (Aptos address)" required>
+                        </div>
+                        <span class="input-hint" id="reviewer-helper-btn">Click to autofill reviewer demo address</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="pact-stake">Stake Amount (APT)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-coins"></i>
+                                <input type="number" id="pact-stake" min="0.1" step="0.1" value="1.0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col-6">
+                            <label for="pact-duration">Deadline Duration</label>
+                            <select id="pact-duration">
+                                <option value="60">1 Minute (For testing)</option>
+                                <option value="300">5 Minutes</option>
+                                <option value="3600">1 Hour</option>
+                                <option value="86400" selected>1 Day</option>
+                                <option value="259200">3 Days</option>
+                                <option value="604800">1 Week</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pact-proof">Proof Link (GitHub Commit SHA or URL)</label>
+                        <div class="input-with-icon">
+                            <i class="fa-brands fa-github"></i>
+                            <input type="text" id="pact-proof" placeholder="e.g. https://github.com/myusername/repo/commit/abc1234">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="btn-create-pact">
+                        <span>Lock Stake & Launch Pact</span>
+                        <i class="fa-solid fa-lock"></i>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Panel: Pacts Viewer -->
+            <section class="panel-card pacts-viewer-panel">
+                <div class="tabs-header">
+                    <button id="tab-active" class="tab-btn active">
+                        Active Pacts <span class="badge" id="active-badge">0</span>
+                    </button>
+                    <button id="tab-history" class="tab-btn">
+                        Resolved History <span class="badge" id="history-badge">0</span>
+                    </button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Active Pacts List -->
+                    <div id="active-pacts-list" class="pacts-list">
+                        <!-- Dynamic content here -->
+                        <div class="empty-state">
+                            <i class="fa-solid fa-box-open"></i>
+                            <p>No active pacts. Create one on the left to start!</p>
+                        </div>
+                    </div>
+
+                    <!-- History Pacts List -->
+                    <div id="history-pacts-list" class="pacts-list hidden">
+                        <!-- Dynamic content here -->
+                        <div class="empty-state">
+                            <i class="fa-solid fa-history"></i>
+                            <p>Your resolved pacts will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Reviewer Simulation Control Panel Float (Only visible in Simulation Mode) -->
+    <div id="reviewer-sim-dock" class="reviewer-sim-dock">
+        <div class="dock-header">
+            <h4><i class="fa-solid fa-robot"></i> Reviewer Simulator Control Panel</h4>
+            <button id="dock-minimize-btn"><i class="fa-solid fa-chevron-down"></i></button>
+        </div>
+        <div class="dock-body" id="dock-body">
+            <p class="dock-desc">You are currently in <strong>Simulator Mode</strong>. You can switch to the Peer Reviewer's account to review and resolve pacts.</p>
+            <div class="user-switcher">
+                <span>Select current active account:</span>
+                <div class="account-selector-buttons">
+                    <button id="btn-switch-creator" class="acc-btn active">
+                        <i class="fa-solid fa-laptop-code"></i> Creator
+                    </button>
+                    <button id="btn-switch-reviewer" class="acc-btn">
+                        <i class="fa-solid fa-shield-halved"></i> Peer Reviewer
+                    </button>
+                </div>
+            </div>
+            <div class="info-alert">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Reviewer can resolve the pact as "Achieved" (creator gets coins back) or "Failed" (coins sent to reviewer).</span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <p>Built with <i class="fa-solid fa-heart"></i> on <strong>Aptos Move</strong>. TechPact leverages Move's strict access control and resource safety features.</p>
+    </footer>
+
+    <!-- Aptos Wallet connection helper / Mock JS -->
+    <script src="app.js"></script>
+</body>
+</html>
