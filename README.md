@@ -115,6 +115,3 @@ npx http-server ./ -p 8080
 Then open `http://127.0.0.1:8080` in your web browser.
 
 ---
-
-## 📄 License
-This project is licensed under the MIT License.
